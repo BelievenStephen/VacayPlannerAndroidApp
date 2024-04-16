@@ -33,7 +33,8 @@ public class VacationAdapter extends RecyclerView.Adapter<VacationAdapter.Vacati
             super(itemView);
             vacationItemView = itemView.findViewById(R.id.textView2);
 
-            // Set an onClickListener to handle user interaction with the vacation item
+            // Set an onClickListener to handle user clicks on the vacation item
+            // When item is clicked, start VacationDetails activity and pass the vacation details
             itemView.setOnClickListener(view -> {
                 int position = getAdapterPosition();
                 if (position != RecyclerView.NO_POSITION) {
@@ -41,6 +42,9 @@ public class VacationAdapter extends RecyclerView.Adapter<VacationAdapter.Vacati
                     Intent intent = new Intent(context, VacationDetails.class);
                     intent.putExtra("id", current.getVacationId());
                     intent.putExtra("title", current.getVacationTitle());
+                    intent.putExtra("hotel", current.getVacationHotel());
+                    intent.putExtra("startdate", current.getStartDate());
+                    intent.putExtra("enddate", current.getEndDate());
                     context.startActivity(intent);
                 }
             });

@@ -28,13 +28,73 @@
                     android:layout_width="wrap_content"
                     android:layout_height="50dp"
                     android:padding="10dp"
-                    android:text="title: " />
+                    android:text="Title:" />
 
                 <EditText
                     android:id="@+id/titletext"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:hint="Enter Vacation Title" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="50dp"
-                    android:hint="Vacation 1" />
+                    android:padding="10dp"
+                    android:text="Hotel:" />
+
+                <EditText
+                    android:id="@+id/hoteltext"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:hint="Enter Hotel Name" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:padding="10dp"
+                    android:text="Start Date:" />
+
+                <TextView
+                    android:id="@+id/startDate"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:hint="Select Start Date"
+                    android:gravity="center_vertical" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:padding="10dp"
+                    android:text="End Date:" />
+
+                <TextView
+                    android:id="@+id/endDate"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:hint="Select End Date"
+                    android:gravity="center_vertical" />
             </LinearLayout>
 
         </LinearLayout>

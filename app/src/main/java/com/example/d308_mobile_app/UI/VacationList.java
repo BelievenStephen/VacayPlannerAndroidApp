@@ -14,7 +14,12 @@ import com.example.d308_mobile_app.database.Repository;
 import com.example.d308_mobile_app.entities.Excursion;
 import com.example.d308_mobile_app.entities.Vacation;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class VacationList extends AppCompatActivity {
     private Repository repository;
@@ -85,9 +90,9 @@ public class VacationList extends AppCompatActivity {
 
 
     private void addSampleData() {
-        Vacation vacation = new Vacation(0, "Japan");
+        Vacation vacation = new Vacation(0, "Japan Trip", "Best Western", "04/27/24", "04/29/24");
         repository.insert(vacation);
-        vacation = new Vacation(0, "Greece");
+        vacation = new Vacation(0, "Greece Visit", "Mariott", "04/27/24", "04/29/24");
         repository.insert(vacation);
         Excursion excursion = new Excursion(0, "City Sightseeing Tour", 1);
         repository.insert(excursion);
