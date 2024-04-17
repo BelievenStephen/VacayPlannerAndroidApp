@@ -38,6 +38,20 @@
             android:exported="false"
             android:label="Vacation List"
             android:parentActivityName="com.example.d308_mobile_app.UI.MainActivity" />
+
+        <!-- Excursion Details Activity -->
+        <activity
+            android:name="com.example.d308_mobile_app.UI.ExcursionDetails"
+            android:exported="false"
+            android:label="Excursion Details"
+            android:parentActivityName="com.example.d308_mobile_app.UI.VacationDetails"/>
+
+        <!-- BroadcastReceiver -->
+        <receiver
+            android:name="com.example.d308_mobile_app.UI.MyReceiver"
+            android:enabled="true"
+            android:exported="true" />
+
     </application>
 
 </manifest>

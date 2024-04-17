@@ -10,6 +10,7 @@ import android.content.Intent;
 import com.example.d308_mobile_app.R;
 
 public class MainActivity extends AppCompatActivity {
+    public static int numAlert;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
