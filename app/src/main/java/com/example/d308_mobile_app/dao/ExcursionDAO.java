@@ -11,13 +11,13 @@ import com.example.d308_mobile_app.entities.Excursion;
 
 @Dao
 public interface ExcursionDAO {
-    @Query("SELECT * FROM EXCURSIONS ORDER BY excursionID ASC")
+    @Query("SELECT excursionID, excursionTitle, vacationID, excursionDate FROM excursions ORDER BY excursionID ASC")
     List<Excursion> getAllExcursions();
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insert(Excursion excursion);
 
-    @Query("SELECT * FROM EXCURSIONS WHERE vacationID=:vacation ORDER BY excursionID ASC")
+    @Query("SELECT excursionID, excursionTitle, vacationID, excursionDate FROM excursions WHERE vacationID=:vacation ORDER BY excursionID ASC")
     List<Excursion> getAssociatedExcursions(int vacation);
 
     @Update

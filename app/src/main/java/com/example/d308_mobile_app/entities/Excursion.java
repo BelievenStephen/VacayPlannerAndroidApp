@@ -3,48 +3,54 @@ package com.example.d308_mobile_app.entities;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-// Entity class for Excursion that maps to "excursions" table in the database
+// Entity class for Excursion that maps to excursions table in the database
 @Entity(tableName = "excursions")
 public class Excursion {
 
-    // Attributes of the Excursion entity
     @PrimaryKey(autoGenerate = true)
     private int excursionID;
     private String excursionTitle;
     private int vacationID;
+    private String excursionDate;
 
-    // Constructor to initialize the Excursion object
-    public Excursion(int excursionID, String excursionTitle, int vacationID) {
+    public Excursion(int excursionID, String excursionTitle, int vacationID, String excursionDate) {
         this.excursionID = excursionID;
         this.excursionTitle = excursionTitle;
         this.vacationID = vacationID;
+        this.excursionDate = excursionDate;
     }
 
-    // Getter and setter methods for excursionID
+    // Getters
     public int getExcursionID() {
         return excursionID;
     }
 
-    public void setExcursionID(int excursionID) {
-        this.excursionID = excursionID;
-    }
-
-    // Getter and setter methods for excursionTitle
     public String getExcursionTitle() {
         return excursionTitle;
+    }
+
+    public int getVacationID() {
+        return vacationID;
+    }
+
+    public String getExcursionDate() {
+        return excursionDate;
+    }
+
+    // Setters
+    public void setExcursionID(int excursionID) {
+        this.excursionID = excursionID;
     }
 
     public void setExcursionTitle(String excursionTitle) {
         this.excursionTitle = excursionTitle;
     }
 
-    // Getter and setter methods for vacationID
-    public int getVacationID() {
-        return vacationID;
-    }
-
     public void setVacationID(int vacationID) {
         this.vacationID = vacationID;
     }
 
+    public void setExcursionDate(String excursionDate) {
+        this.excursionDate = excursionDate;
+    }
 }
