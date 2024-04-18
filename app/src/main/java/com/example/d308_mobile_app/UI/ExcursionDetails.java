@@ -1,47 +1,58 @@
 package com.example.d308_mobile_app.UI;
 
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import com.example.d308_mobile_app.R;
 import com.example.d308_mobile_app.database.Repository;
 import com.example.d308_mobile_app.entities.Excursion;
 
+
+
 /**
  * Activity to handle the details of an Excursion.
  */
 public class ExcursionDetails extends AppCompatActivity {
-    // Member variables for views and data handling
-    private EditText editTitle;
-    private TextView editExcursionDate;
-    private DatePickerDialog.OnDateSetListener excursionDate;
-    private final Calendar myCalendarDate = Calendar.getInstance();
-
     // Data variables
     private int excursionID;
     private int vacationID;
+    private String title;
+    private String setDate;
 
-    // Database repository
+    // Views
+    private EditText editTitle;
+    private TextView editExcursionDate;
+
+    // Data handling
     private Repository repository;
-
-    // Excursion entity for current details
     private Excursion currentExcursion;
+
+    // Date handling
+    private final Calendar myCalendarDate = Calendar.getInstance();
+    private DatePickerDialog.OnDateSetListener excursionDate;
 
     // onCreate lifecycle method to initialize activity components
     @Override
@@ -49,17 +60,31 @@ public class ExcursionDetails extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.excursion_details_layout);
 
-        // Set up repository and retrieve excursion details from intent
         repository = new Repository(getApplication());
         excursionID = getIntent().getIntExtra("id", -1);
         vacationID = getIntent().getIntExtra("vacationID", -1);
+        title = getIntent().getStringExtra("title");
 
-        // Initialize UI components
         editTitle = findViewById(R.id.excursionTitle);
-        editTitle.setText(getIntent().getStringExtra("title"));
+        editTitle.setText(title);
 
-        // Initialize excursion date TextView and DatePickerDialog
-        editExcursionDate = findViewById(R.id.excursionDate); // Make sure you have a TextView with this ID in your layout
+        // Initialize the date TextView and set up the DatePicker
+        editExcursionDate = findViewById(R.id.excursionDate);
+        setDate = getIntent().getStringExtra("excursionDate");
+
+        // Parse and set the initial date if it exists
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy", Locale.US);
+        if (setDate != null && !setDate.isEmpty()) {
+            try {
+                Date date = sdf.parse(setDate);
+                myCalendarDate.setTime(date);
+                updateLabel();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+
+        // Setup onClickListener for the date field to show DatePickerDialog
         editExcursionDate.setOnClickListener(view -> {
             DatePickerDialog datePickerDialog = new DatePickerDialog(
                     ExcursionDetails.this,
@@ -71,7 +96,6 @@ public class ExcursionDetails extends AppCompatActivity {
             datePickerDialog.show();
         });
 
-        // Set the calendar instance
         excursionDate = (view, year, month, dayOfMonth) -> {
             myCalendarDate.set(Calendar.YEAR, year);
             myCalendarDate.set(Calendar.MONTH, month);
@@ -80,11 +104,19 @@ public class ExcursionDetails extends AppCompatActivity {
         };
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateLabel();
+    }
+
+
     private void updateLabel() {
-        String myFormat = "MM/dd/yy";
-        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy", Locale.US);
         editExcursionDate.setText(sdf.format(myCalendarDate.getTime()));
     }
+
+
 
     // Inflates the menu for ExcursionDetails
     @Override
@@ -101,10 +133,31 @@ public class ExcursionDetails extends AppCompatActivity {
             finish();
             return true;
         } else if (itemId == R.id.excursionsave) {
-            saveExcursion();
-            return true;
+            return saveExcursion();
         } else if (itemId == R.id.excursiondelete) {
             deleteExcursion();
+            return true;
+        } else if (itemId == R.id.excursionalert) { // error 1 here
+            String dateFromScreen = editExcursionDate.getText().toString();
+            String alert = "Excursion " + title + " is today"; // error 2 here
+            String myFormat = "MM/dd/yy";
+            SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+            try {
+                Date myDate = sdf.parse(dateFromScreen);
+                long trigger = myDate.getTime();
+                Intent intent = new Intent(ExcursionDetails.this, MyReceiver.class);
+                intent.putExtra("key", alert);
+                PendingIntent sender = PendingIntent.getBroadcast(
+                        ExcursionDetails.this,
+                        ++MainActivity.numAlert,
+                        intent,
+                        PendingIntent.FLAG_IMMUTABLE
+                );
+                AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+                alarmManager.set(AlarmManager.RTC_WAKEUP, trigger, sender);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
             return true;
         } else {
             return super.onOptionsItemSelected(item);
@@ -112,10 +165,10 @@ public class ExcursionDetails extends AppCompatActivity {
     }
 
 
+
     // Helper method to save excursion
-    // Helper method to save excursion
-    private void saveExcursion() {
-        String myFormat = "MM/dd/yy"; // Define your date format
+    private boolean saveExcursion() {
+        String myFormat = "MM/dd/yy";
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
         String excursionDateString = sdf.format(myCalendarDate.getTime());
 
@@ -132,7 +185,7 @@ public class ExcursionDetails extends AppCompatActivity {
             excursion = new Excursion(excursionID, excursionTitle, vacationID, excursionDateString);
             repository.update(excursion);
         }
-        finish();
+        return false;
     }
 
 
