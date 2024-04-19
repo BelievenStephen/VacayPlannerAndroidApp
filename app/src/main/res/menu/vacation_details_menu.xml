@@ -10,8 +10,6 @@
         android:id="@+id/alertstart"/>
     <item android:title="Alert End"
         android:id="@+id/alertend"/>
-    <item android:title="Full Vacation Alerts"
-        android:id="@+id/alertfull"/>
     <item android:title="Share"
         android:id="@+id/share"/>
 </menu>

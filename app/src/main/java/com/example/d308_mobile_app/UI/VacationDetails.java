@@ -28,6 +28,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Random;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.example.d308_mobile_app.R;
@@ -52,6 +53,9 @@ public class VacationDetails extends AppCompatActivity {
     final Calendar myCalendarEnd = Calendar.getInstance();
     List<Excursion> filteredExcursions = new ArrayList<>();
     private ExcursionAdapter excursionAdapter;
+    Random rand = new Random();
+    int numAlert;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,12 +68,33 @@ public class VacationDetails extends AppCompatActivity {
         editStartDate = findViewById(R.id.startDate);
         editEndDate = findViewById(R.id.endDate);
 
-        // Retrieve and set vacation details from the intent
         vacationID = getIntent().getIntExtra("id", -1);
         title = getIntent().getStringExtra("title");
         hotel = getIntent().getStringExtra("hotel");
+        String startDateString = getIntent().getStringExtra("startdate");
+        String endDateString = getIntent().getStringExtra("enddate");
+
         editTitle.setText(title);
         editHotel.setText(hotel);
+
+        final SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy", Locale.US);
+        try {
+            if (startDateString != null && !startDateString.isEmpty()) {
+                Date startDate = sdf.parse(startDateString);
+                myCalendarStart.setTime(startDate);
+            }
+            if (endDateString != null && !endDateString.isEmpty()) {
+                Date endDate = sdf.parse(endDateString);
+                myCalendarEnd.setTime(endDate);
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        updateLabelStart();
+        updateLabelEnd();
+
+        setUpDatePickers();
 
         FloatingActionButton fab = findViewById(R.id.floatingActionButton2);
         fab.setOnClickListener(view -> {
@@ -83,26 +108,6 @@ public class VacationDetails extends AppCompatActivity {
         recyclerView.setAdapter(excursionAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         updateExcursions();
-
-        final SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy", Locale.US);
-
-        startDate = (view, year, month, dayOfMonth) -> {
-            myCalendarStart.set(year, month, dayOfMonth);
-            editStartDate.setText(sdf.format(myCalendarStart.getTime()));
-        };
-
-        endDate = (view, year, month, dayOfMonth) -> {
-            myCalendarEnd.set(year, month, dayOfMonth);
-            editEndDate.setText(sdf.format(myCalendarEnd.getTime()));
-        };
-
-        editStartDate.setOnClickListener(view ->
-                new DatePickerDialog(VacationDetails.this, startDate, myCalendarStart.get(Calendar.YEAR),
-                        myCalendarStart.get(Calendar.MONTH), myCalendarStart.get(Calendar.DAY_OF_MONTH)).show());
-
-        editEndDate.setOnClickListener(view ->
-                new DatePickerDialog(VacationDetails.this, endDate, myCalendarEnd.get(Calendar.YEAR),
-                        myCalendarEnd.get(Calendar.MONTH), myCalendarEnd.get(Calendar.DAY_OF_MONTH)).show());
     }
 
     private void updateExcursions() {
@@ -120,7 +125,6 @@ public class VacationDetails extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.vacation_details_menu, menu);
         return true;
     }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int itemId = item.getItemId();
@@ -132,8 +136,11 @@ public class VacationDetails extends AppCompatActivity {
             return handleVacationSave();
         } else if (itemId == R.id.vacationdelete) {
             return handleVacationDelete();
-        } else if (itemId == R.id.alertstart || itemId == R.id.alertend || itemId == R.id.alertfull) {
-            handleAlerts(itemId);
+        } else if (itemId == R.id.alertstart) {
+            alertPicker(editStartDate.getText().toString(), "Vacation " + title + " is starting");
+            return true;
+        } else if (itemId == R.id.alertend) {
+            alertPicker(editEndDate.getText().toString(), "Vacation " + title + " is ending");
             return true;
         } else if (itemId == R.id.share) {
             handleShare();
@@ -187,16 +194,6 @@ public class VacationDetails extends AppCompatActivity {
         return true;
     }
 
-    private void handleAlerts(int itemId) {
-        String dateFromScreen = itemId == R.id.alertend ? editEndDate.getText().toString() : editStartDate.getText().toString();
-        String alertMessage = itemId == R.id.alertend ? "Vacation " + title + " is ending" : "Vacation " + title + " is starting";
-        if (itemId == R.id.alertfull) {
-            alertPicker(editStartDate.getText().toString(), "Vacation " + title + " is starting");
-            alertPicker(editEndDate.getText().toString(), "Vacation " + title + " is ending");
-        } else {
-            alertPicker(dateFromScreen, alertMessage);
-        }
-    }
 
     private void handleShare() {
         Intent sendIntent = new Intent();
@@ -216,6 +213,32 @@ public class VacationDetails extends AppCompatActivity {
         startActivity(Intent.createChooser(sendIntent, "Share Via"));
     }
 
+    private void setUpDatePickers() {
+        startDate = (view, year, month, dayOfMonth) -> {
+            myCalendarStart.set(Calendar.YEAR, year);
+            myCalendarStart.set(Calendar.MONTH, month);
+            myCalendarStart.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+            updateLabelStart();
+        };
+
+        endDate = (view, year, month, dayOfMonth) -> {
+            myCalendarEnd.set(Calendar.YEAR, year);
+            myCalendarEnd.set(Calendar.MONTH, month);
+            myCalendarEnd.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+            updateLabelEnd();
+        };
+
+        editStartDate.setOnClickListener(view ->
+                new DatePickerDialog(VacationDetails.this, startDate,
+                        myCalendarStart.get(Calendar.YEAR), myCalendarStart.get(Calendar.MONTH),
+                        myCalendarStart.get(Calendar.DAY_OF_MONTH)).show());
+
+        editEndDate.setOnClickListener(view ->
+                new DatePickerDialog(VacationDetails.this, endDate,
+                        myCalendarEnd.get(Calendar.YEAR), myCalendarEnd.get(Calendar.MONTH),
+                        myCalendarEnd.get(Calendar.DAY_OF_MONTH)).show());
+    }
+
     public void alertPicker(String dateFromScreen, String alert) {
         SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy", Locale.US);
         try {
@@ -223,26 +246,26 @@ public class VacationDetails extends AppCompatActivity {
             long triggerTime = date.getTime();
             Intent intent = new Intent(VacationDetails.this, MyReceiver.class);
             intent.putExtra("key", alert);
-            PendingIntent sender = PendingIntent.getBroadcast(VacationDetails.this, MainActivity.numAlert++, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent sender = PendingIntent.getBroadcast(
+                    VacationDetails.this, numAlert, intent, PendingIntent.FLAG_UPDATE_CURRENT
+            );
             AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
             alarmManager.set(AlarmManager.RTC_WAKEUP, triggerTime, sender);
+            numAlert = rand.nextInt(99999);
         } catch (ParseException e) {
             e.printStackTrace();
         }
     }
 
+
     private void updateLabelStart() {
         SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy", Locale.US);
-        if (myCalendarStart != null) {
-            editStartDate.setText(sdf.format(myCalendarStart.getTime()));
-        }
+        editStartDate.setText(sdf.format(myCalendarStart.getTime()));
     }
 
     private void updateLabelEnd() {
         SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy", Locale.US);
-        if (myCalendarEnd != null) {
-            editEndDate.setText(sdf.format(myCalendarEnd.getTime()));
-        }
+        editEndDate.setText(sdf.format(myCalendarEnd.getTime()));
     }
 
 

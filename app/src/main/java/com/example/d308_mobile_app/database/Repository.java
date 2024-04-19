@@ -80,4 +80,12 @@ public class Repository {
             throw new RuntimeException("Interrupted during database operation", e);
         }
     }
+    public Vacation getVacationById(int id) {
+        for (Vacation vacation : getmAllVacations()) {
+            if (vacation.getVacationId() == id) {
+                return vacation;
+            }
+        }
+        return null;
+    }
 }
