@@ -12,11 +12,14 @@
         android:paddingStart="16dp"
         android:paddingTop="8dp"
         android:paddingEnd="16dp"
-        android:paddingBottom="8dp"
+        android:paddingBottom="16dp"
+        android:lineSpacingExtra="4dp"
+        android:textSize="28sp"
         android:text="TextView"
         tools:text="Sample Vacation Title"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

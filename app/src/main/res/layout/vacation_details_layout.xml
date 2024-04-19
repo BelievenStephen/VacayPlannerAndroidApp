@@ -100,18 +100,31 @@
         </LinearLayout>
     </ScrollView>
 
+    <TextView
+        android:id="@+id/textViewAddExcursions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add Excursions"
+        android:layout_marginEnd="16dp"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@id/floatingActionButton2"
+        app:layout_constraintEnd_toStartOf="@id/floatingActionButton2"
+        app:layout_constraintTop_toTopOf="@id/floatingActionButton2" />
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floatingActionButton2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:clickable="true"
+        android:focusable="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.954"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/scrollView"
         app:layout_constraintVertical_bias="0.966"
-        app:srcCompat="@drawable/icon_add_24" />
+        app:srcCompat="@drawable/icon_add_24"
+        app:layout_constraintTop_toBottomOf="@id/scrollView" />
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/excursionrecyclerview"
